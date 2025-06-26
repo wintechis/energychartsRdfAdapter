@@ -1,0 +1,193 @@
+@prefix : <https://energycharts-rdf-adapter.deno.dev/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix http: <http://www.w3.org/2011/http#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix hydra: <http://www.w3.org/ns/hydra/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+
+<> a owl:Ontology ;
+   dc:title "Energy Charts RDF Adapter" ;
+   owl:versionInfo "0.0.1" ;
+   rdfs:seeAlso :root, :prices .
+
+:root a hydra:Resource ;
+      http:requests :GET-root-200 ;
+      rdfs:label "API Root" ;
+      rdfs:comment "The root endpoint providing API status information." .
+
+:prices a hydra:Resource ;
+        http:requests :GET-prices-200, :GET-prices-400, :GET-prices-500 ;
+        rdfs:label "Day Ahead Prices" ;
+        rdfs:comment "The '/prices' endpoint for energy day-ahead spot market price data." .
+
+# Root endpoint
+:GET-root-200
+    rdfs:label "GET '/' resource" ;
+    http:methodName "GET" ;
+    http:absolutePath "/" ;
+    hydra:method "GET" ;
+    http:resp [ 
+        http:statusCodeNumber 200 ;
+        http:reasonPhrase "OK" ;
+        http:headers ( 
+            [ http:fieldName "Content-Type" ; http:fieldValue "application/json" ] 
+        )
+    ] .
+
+# Prices endpoint
+:GET-prices-200
+    rdfs:label "GET '/prices' resource" ;
+    http:methodName "GET" ;
+    http:absolutePath "/prices" ;
+    hydra:method "GET" ;
+    hydra:expects [
+        a hydra:IriTemplate ;
+        hydra:template "/prices{?bzn,start,end}" ;
+        hydra:mapping [
+            a hydra:IriTemplateMapping ;
+            hydra:variable "bzn" ;
+            hydra:property schema:biddingZone ;
+            hydra:required "false"^^xsd:boolean ;
+            rdfs:comment "Bidding zone identifier, defaults to 'DE-LU'" ;
+            schema:defaultValue "DE-LU" ;
+            schema:enumeration [
+                a skos:ConceptScheme ;
+                skos:hasTopConcept :bzn_AT, :bzn_BE, :bzn_CH, :bzn_CZ, :bzn_DE_LU, :bzn_DE_AT_LU,
+                                :bzn_DK1, :bzn_DK2, :bzn_FR, :bzn_HU, :bzn_IT_North,
+                                :bzn_NL, :bzn_NO2, :bzn_PL, :bzn_SE4, :bzn_SI ;
+            ]
+        ], [
+            a hydra:IriTemplateMapping ;
+            hydra:variable "start" ;
+            hydra:property schema:startDate ;
+            hydra:required "false"^^xsd:boolean ;
+            rdfs:comment "Start date for price data query" ;
+        ], [
+            a hydra:IriTemplateMapping ;
+            hydra:variable "end" ;
+            hydra:property schema:endDate ;
+            hydra:required "false"^^xsd:boolean ;
+            rdfs:comment "End date for price data query" ;
+        ]
+    ] ;
+    http:headers (
+        [ http:fieldName "Accept" ; http:fieldValue "text/turtle, application/n-triples, application/n-quads, application/trig, text/n3, application/ld+json, application/json" ]
+    ) ;
+    http:resp [ 
+        http:statusCodeNumber 200 ;
+        http:reasonPhrase "OK" ;
+        http:headers (
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "text/turtle" ;
+              rdfs:comment "Default RDF format when Accept header requests RDF" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "application/n-triples" ;
+              rdfs:comment "When Accept header is application/n-triples" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "application/n-quads" ;
+              rdfs:comment "When Accept header is application/n-quads" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "application/trig" ;
+              rdfs:comment "When Accept header is application/trig" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "text/n3" ;
+              rdfs:comment "When Accept header is text/n3" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "application/ld+json" ;
+              rdfs:comment "When Accept header is application/ld+json" ]
+            [ http:fieldName "Content-Type" ; 
+              http:fieldValue "application/json" ;
+              rdfs:comment "Default format when no matching Accept header" ]
+            [ http:fieldName "Vary" ; http:fieldValue "Accept" ]
+        )
+    ] .
+
+:GET-prices-400
+    rdfs:label "GET '/prices' error" ;
+    http:methodName "GET" ;
+    http:absolutePath "/prices" ;
+    hydra:method "GET" ;
+    http:resp [ 
+        http:statusCodeNumber 400 ;
+        http:reasonPhrase "Bad Request" ;
+        http:headers ( [ http:fieldName "Content-Type" ; http:fieldValue "application/json" ] )
+    ] .
+
+:GET-prices-500
+    rdfs:label "GET '/prices' server error" ;
+    http:methodName "GET" ;
+    http:absolutePath "/prices" ;
+    hydra:method "GET" ;
+    http:resp [ 
+        http:statusCodeNumber 500 ;
+        http:reasonPhrase "Internal Server Error" ;
+        http:headers ( [ http:fieldName "Content-Type" ; http:fieldValue "application/json" ] )
+    ] .
+
+# Bidding zone concepts
+:bzn_AT a skos:Concept ;
+    rdfs:label "AT" ;
+    rdfs:comment "Austria" .
+
+:bzn_BE a skos:Concept ;
+    rdfs:label "BE" ;
+    rdfs:comment "Belgium" .
+
+:bzn_CH a skos:Concept ;
+    rdfs:label "CH" ;
+    rdfs:comment "Switzerland" .
+
+:bzn_CZ a skos:Concept ;
+    rdfs:label "CZ" ;
+    rdfs:comment "Czech Republic" .
+
+:bzn_DE_LU a skos:Concept ;
+    rdfs:label "DE-LU" ;
+    rdfs:comment "Germany, Luxembourg" .
+
+:bzn_DE_AT_LU a skos:Concept ;
+    rdfs:label "DE-AT-LU" ;
+    rdfs:comment "Germany, Austria, Luxembourg" .
+
+:bzn_DK1 a skos:Concept ;
+    rdfs:label "DK1" ;
+    rdfs:comment "Denmark 1" .
+
+:bzn_DK2 a skos:Concept ;
+    rdfs:label "DK2" ;
+    rdfs:comment "Denmark 2" .
+
+:bzn_FR a skos:Concept ;
+    rdfs:label "FR" ;
+    rdfs:comment "France" .
+
+:bzn_HU a skos:Concept ;
+    rdfs:label "HU" ;
+    rdfs:comment "Hungary" .
+
+:bzn_IT_North a skos:Concept ;
+    rdfs:label "IT-North" ;
+    rdfs:comment "Italy North" .
+
+:bzn_NL a skos:Concept ;
+    rdfs:label "NL" ;
+    rdfs:comment "Netherlands" .
+
+:bzn_NO2 a skos:Concept ;
+    rdfs:label "NO2" ;
+    rdfs:comment "Norway 2" .
+
+:bzn_PL a skos:Concept ;
+    rdfs:label "PL" ;
+    rdfs:comment "Poland" .
+
+:bzn_SE4 a skos:Concept ;
+    rdfs:label "SE4" ;
+    rdfs:comment "Sweden 4" .
+
+:bzn_SI a skos:Concept ;
+    rdfs:label "SI" ;
+    rdfs:comment "Slovenia" .

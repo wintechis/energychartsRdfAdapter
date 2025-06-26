@@ -1,0 +1,31 @@
+{
+  "name": "@wintechis/energycharts-rdf-adapter",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "description": "A Deno application to convert energycharts responses to RDF format.",
+  "exports": "./mod.ts",
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --watch server.ts",
+    "start": "deno run --allow-net --allow-env server.ts",
+    "test": "deno test --allow-all",
+    "check": "deno check mod.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "n3": "npm:n3@^1.25.2",
+    "src/": "./src/"
+  },
+  "publish": {
+    "include": [
+      "README.md",
+      "LICENSE",
+      "mod.ts",
+      "server.ts",
+      "src/**/*"
+    ]
+  },
+  "fmt": {
+    "singleQuote": false,
+    "proseWrap": "preserve"
+  }
+}
