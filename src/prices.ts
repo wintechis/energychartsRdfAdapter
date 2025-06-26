@@ -60,7 +60,6 @@ export function pricesToRDF(
       ),
     );
 
-
     // Add attribution and license information
     writer.addQuad(
       observationUri,
