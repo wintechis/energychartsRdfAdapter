@@ -5,7 +5,6 @@ import { mapContentTypeToFormat } from "./format-utils.ts";
 
 const { namedNode, literal } = DataFactory;
 const {
-  BASE_OBSERVATION_URL,
   SOSA_NAMESPACE,
   RDF_NAMESPACE,
   XSD_NAMESPACE,
@@ -26,6 +25,7 @@ export function pricesToRDF(
 
   const writer = new Writer({
     prefixes: {
+      '': '#',
       sosa: SOSA_NAMESPACE,
       rdf: RDF_NAMESPACE,
       xsd: XSD_NAMESPACE,
@@ -41,7 +41,7 @@ export function pricesToRDF(
   response.unix_seconds.forEach((timestamp, index) => {
     const price = response.price[index];
     const obsId = `price_${timestamp}`;
-    const observationUri = namedNode(`${BASE_OBSERVATION_URL}${obsId}`);
+    const observationUri = namedNode(`:${obsId}`);
 
     // Type definition for observation
     writer.addQuad(

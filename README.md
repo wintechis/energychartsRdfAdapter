@@ -102,7 +102,7 @@ The above code outputs the following RDF data:
 @prefix dct: <http://purl.org/dc/terms/>.
 @prefix cc: <http://creativecommons.org/ns#>.
 
-<https://energy-charts.info/observation/price_1704067200> a sosa:Observation;
+:price_1704067200 a sosa:Observation;
     sosa:resultTime "2024-01-01T00:00:00.000Z"^^xsd:dateTime;
     dct:source <https://www.smard.de/>;
     dct:license <https://creativecommons.org/licenses/by/4.0/>;

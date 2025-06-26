@@ -19,9 +19,9 @@ Deno.test("RDF conversion - should convert energy prices to RDF", async () => {
   // Test that the RDF contains expected triples
   const expectedStrings = [
     // Observation URIs
-    `<https://energy-charts.info/observation/price_1704067200>`,
-    `<https://energy-charts.info/observation/price_1704070800>`,
-    `<https://energy-charts.info/observation/price_1704074400>`,
+    `:price_1704067200`,
+    `:price_1704070800`,
+    `:price_1704074400`,
 
     // Type declarations
     `sosa:Observation`,
@@ -47,6 +47,8 @@ Deno.test("RDF conversion - should convert energy prices to RDF", async () => {
     // Quantity value type
     `qudt:QuantityValue`,
   ];
+
+  console.log(rdf);
 
   for (const expected of expectedStrings) {
     assert(rdf.includes(expected), `RDF should contain ${expected}`);
