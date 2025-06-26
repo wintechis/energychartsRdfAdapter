@@ -25,7 +25,7 @@ export function pricesToRDF(
 
   const writer = new Writer({
     prefixes: {
-      '': '#',
+      "": "#",
       sosa: SOSA_NAMESPACE,
       rdf: RDF_NAMESPACE,
       xsd: XSD_NAMESPACE,
