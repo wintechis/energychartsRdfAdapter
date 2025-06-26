@@ -1,6 +1,6 @@
 # Energy Charts RDF Adapter
 
-This library provides a Deno-based interface to the Energy Charts API with RDF conversion capabilities.
+This library provides a Deno-based interface to the [Energy Charts API](https://energy-charts.info/) with RDF conversion capabilities.
 
 ## Usage
 
